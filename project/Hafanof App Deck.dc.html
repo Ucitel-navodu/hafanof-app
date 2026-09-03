@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#2A1C16;font-family:"Public Sans",system-ui,sans-serif}
+a{color:#5B4034}a:hover{color:#C9A227}
+*{box-sizing:border-box}
+</style>
+</helmet>
+
+<x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+  <section id="s1" data-label="Titul" data-screen-label="01" data-speaker-notes="Aplikace pro Hafanof z.s. Vychází z nové identity a z toho, že azyl od dubna funguje jen přes dočasné péče." style="width:100%;height:100%;background:#5B4034;color:#FDF9F2;padding:110px 120px;display:flex;flex-direction:column;justify-content:space-between">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start">
+      <img src="./assets/logo-light.png" alt="Hafanof" style="width:220px;height:220px;border-radius:110px;display:block">
+      <div style="font:600 24px/1 'Public Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:rgba(253,249,242,.55);padding-top:18px">Návrh mobilní aplikace · 2026</div>
+    </div>
+    <div>
+      <h1 style="font:400 132px/1.02 Newsreader,serif;margin:0;letter-spacing:-.02em">Jedna aplikace,<br>pět rolí</h1>
+      <p style="font:400 34px/1.45 'Public Sans',sans-serif;color:rgba(253,249,242,.75);margin:44px 0 0;max-width:1180px;text-wrap:pretty">Koordinátorky, dočasné péče, patroni a adoptující v jednom prostředí. Postaveno na nové hnědo-krémové identitě, česky s přepínačem do angličtiny.</p>
+    </div>
+    <div style="display:flex;gap:56px;font:600 25px 'Public Sans',sans-serif;color:rgba(253,249,242,.6);letter-spacing:.02em">
+      <span>15 obrazovek</span><span>4 role</span><span>Funkční prototyp</span>
+    </div>
+  </section>
+
+  <section id="s2" data-label="Kontext" data-screen-label="02" data-speaker-notes="Od 1. dubna nejsou kotce. Péče se odehrává v cizích domácnostech, takže tým potřebuje nástroj v telefonu, ne tabulku v kanceláři." style="width:100%;height:100%;background:#FDF9F2;color:#33231C;padding:110px 120px;display:flex;flex-direction:column;justify-content:center;gap:72px">
+    <div>
+      <div style="font:600 24px/1 'Public Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#A3937F">Východisko</div>
+      <h2 style="font:400 92px/1.08 Newsreader,serif;margin:34px 0 0;max-width:1400px;letter-spacing:-.015em">Azyl bez kotců potřebuje jiný nástroj</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:32px">
+      <div style="background:#FFFFFF;border:1px solid rgba(91,64,52,.12);border-radius:28px;padding:44px">
+        <div style="font:400 76px/1 Newsreader,serif;color:#5B4034">14</div>
+        <div style="font:400 28px/1.45 'Public Sans',sans-serif;color:#5E5049;margin-top:24px">pejsků v dočaskách, každý v jiné domácnosti</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid rgba(91,64,52,.12);border-radius:28px;padding:44px">
+        <div style="font:400 76px/1 Newsreader,serif;color:#C9A227">1. 4.</div>
+        <div style="font:400 28px/1.45 'Public Sans',sans-serif;color:#5E5049;margin-top:24px">azyl přešel plně na dočasné péče</div>
+      </div>
+      <div style="background:#5B4034;border-radius:28px;padding:44px;color:#FDF9F2">
+        <div style="font:400 76px/1 Newsreader,serif">27 %</div>
+        <div style="font:400 28px/1.45 'Public Sans',sans-serif;color:rgba(253,249,242,.78);margin-top:24px">sbírky na nový azyl — 412 000 z 1 500 000 Kč</div>
+      </div>
+    </div>
+    <p style="font:400 32px/1.5 'Public Sans',sans-serif;color:#5E5049;margin:0;max-width:1420px;text-wrap:pretty">Informace o psech se dnes rozpadají mezi WhatsApp, papíry a hlavy dobrovolníků. Aplikace je drží na jednom místě a přizpůsobí se roli, ve které se člověk právě přihlásí.</p>
+  </section>
+
+  <section id="s3" data-label="Role" data-screen-label="03" data-speaker-notes="Role se volí při přihlášení a mění celý spodní navigační pruh. Přepnout se dá kdykoli." style="width:100%;height:100%;background:#FDF9F2;color:#33231C;padding:100px 120px;display:flex;gap:96px;align-items:center">
+    <div style="width:640px;flex:none">
+      <div style="font:600 24px/1 'Public Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#A3937F">Struktura</div>
+      <h2 style="font:400 88px/1.08 Newsreader,serif;margin:34px 0 0;letter-spacing:-.015em">Role určuje celou navigaci</h2>
+      <p style="font:400 30px/1.5 'Public Sans',sans-serif;color:#5E5049;margin:36px 0 0;text-wrap:pretty">Dočaska nevidí schvalování, patron nevidí zdravotní záznamy. Každá role má vlastní spodní pruh se čtyřmi místy, takže nikdo nehledá funkci, která pro něj není.</p>
+    </div>
+    <div style="flex:1;display:flex;flex-direction:column;gap:22px">
+      <div style="background:#FFFFFF;border:1px solid rgba(91,64,52,.12);border-radius:26px;padding:38px 44px;display:flex;align-items:baseline;gap:32px">
+        <div style="font:400 40px/1 Newsreader,serif;color:#5B4034;width:280px;flex:none">Koordinátorka</div>
+        <div style="font:400 26px/1.4 'Public Sans',sans-serif;color:#5E5049">Přehled · Tlapky · Kalendář · Schvalování</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid rgba(91,64,52,.12);border-radius:26px;padding:38px 44px;display:flex;align-items:baseline;gap:32px">
+        <div style="font:400 40px/1 Newsreader,serif;color:#5B4034;width:280px;flex:none">Dočasná péče</div>
+        <div style="font:400 26px/1.4 'Public Sans',sans-serif;color:#5E5049">Domov · Deník · Přání · Foto</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid rgba(91,64,52,.12);border-radius:26px;padding:38px 44px;display:flex;align-items:baseline;gap:32px">
+        <div style="font:400 40px/1 Newsreader,serif;color:#5B4034;width:280px;flex:none">Patron</div>
+        <div style="font:400 26px/1.4 'Public Sans',sans-serif;color:#5E5049">Patronát · Psí přání · Tlapky</div>
+      </div>
+      <div style="background:#FFFFFF;border:1px solid rgba(91,64,52,.12);border-radius:26px;padding:38px 44px;display:flex;align-items:baseline;gap:32px">
+        <div style="font:400 40px/1 Newsreader,serif;color:#5B4034;width:280px;flex:none">Adoptující</div>
+        <div style="font:400 26px/1.4 'Public Sans',sans-serif;color:#5E5049">K adopci · Přání · Žádost</div>
+      </div>
+      <div style="border:1.5px dashed rgba(91,64,52,.3);border-radius:26px;padding:34px 44px;display:flex;align-items:baseline;gap:32px">
+        <div style="font:400 40px/1 Newsreader,serif;color:#A3937F;width:280px;flex:none">Dobrovolník</div>
+        <div style="font:400 26px/1.4 'Public Sans',sans-serif;color:#A3937F">Směny a venčení — připraveno, zatím nenavrženo</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s4" data-label="Koordinátorka" data-screen-label="04" data-speaker-notes="Ranní obrazovka koordinátorky: úkoly na dnes, fotky ke schválení, stav sbírky." style="width:100%;height:100%;background:#FDF9F2;color:#33231C;padding:100px 120px;display:flex;gap:110px;align-items:center">
+    <div style="width:560px;height:880px;flex:none;background:#FFFFFF;border:1px solid rgba(91,64,52,.14);border-radius:56px;padding:48px 40px;display:flex;flex-direction:column;box-shadow:0 40px 90px rgba(42,28,22,.14)">
+      <div style="font:600 20px/1 'Public Sans',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#A3937F">Středa 3. září</div>
+      <div style="font:400 52px/1.08 Newsreader,serif;margin-top:18px">Dobré ráno,<br>Kláro</div>
+      <div style="display:flex;gap:14px;margin-top:34px">
+        <div style="flex:1;background:#FDF9F2;border:1px solid rgba(91,64,52,.1);border-radius:22px;padding:22px"><div style="font:400 40px/1 Newsreader,serif;color:#5B4034">14</div><div style="font:400 19px/1.3 'Public Sans',sans-serif;color:#8C7B72;margin-top:10px">v dočaskách</div></div>
+        <div style="flex:1;background:#FDF9F2;border:1px solid rgba(91,64,52,.1);border-radius:22px;padding:22px"><div style="font:400 40px/1 Newsreader,serif;color:#C9A227">2</div><div style="font:400 19px/1.3 'Public Sans',sans-serif;color:#8C7B72;margin-top:10px">hledají DP</div></div>
+        <div style="flex:1;background:#FDF9F2;border:1px solid rgba(91,64,52,.1);border-radius:22px;padding:22px"><div style="font:400 40px/1 Newsreader,serif;color:#5B4034">5</div><div style="font:400 19px/1.3 'Public Sans',sans-serif;color:#8C7B72;margin-top:10px">žádostí</div></div>
+      </div>
+      <div style="font:600 18px/1 'Public Sans',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#A3937F;margin-top:38px">Dnes tě čeká</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:18px">
+        <div style="background:#FDF9F2;border:1px solid rgba(91,64,52,.1);border-radius:22px;padding:22px 24px;display:flex;gap:18px;align-items:center">
+          <div style="width:30px;height:30px;border-radius:15px;border:2px solid rgba(91,64,52,.3);flex:none"></div>
+          <div style="flex:1"><div style="font:600 24px 'Public Sans',sans-serif">Veterinář — Mia</div><div style="font:400 20px 'Public Sans',sans-serif;color:#8C7B72;margin-top:5px">Kontrola po operaci</div></div>
+          <div style="font:600 20px 'Public Sans',sans-serif;color:#C9A227">14:00</div>
+        </div>
+        <div style="background:#FDF9F2;border:1px solid rgba(91,64,52,.1);border-radius:22px;padding:22px 24px;display:flex;gap:18px;align-items:center">
+          <div style="width:30px;height:30px;border-radius:15px;background:#5B4034;flex:none;display:flex;align-items:center;justify-content:center;color:#FDF9F2;font:700 17px 'Public Sans',sans-serif">✓</div>
+          <div style="flex:1"><div style="font:600 24px 'Public Sans',sans-serif;text-decoration:line-through">Venčení — Harry</div><div style="font:400 20px 'Public Sans',sans-serif;color:#8C7B72;margin-top:5px">S Petrou, park pod Křížovou</div></div>
+          <div style="font:600 20px 'Public Sans',sans-serif;color:#C9A227">17:00</div>
+        </div>
+      </div>
+      <div style="margin-top:auto;background:#5B4034;border-radius:26px;padding:30px;color:#FDF9F2">
+        <div style="font:600 17px/1 'Public Sans',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(253,249,242,.6)">Naše největší mise</div>
+        <div style="font:400 34px/1.15 Newsreader,serif;margin-top:14px">Stavíme nový Hafanof</div>
+        <div style="height:9px;border-radius:5px;background:rgba(253,249,242,.2);margin-top:22px;overflow:hidden"><div style="height:100%;width:27%;background:#C9A227;border-radius:5px"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:14px;font:500 20px 'Public Sans',sans-serif"><span>412 000 Kč</span><span style="color:rgba(253,249,242,.6)">z 1 500 000 Kč</span></div>
+      </div>
+    </div>
+    <div style="flex:1">
+      <div style="font:600 24px/1 'Public Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#A3937F">Koordinátorka</div>
+      <h2 style="font:400 84px/1.08 Newsreader,serif;margin:32px 0 0;letter-spacing:-.015em">Ráno začíná<br>seznamem, ne<br>hledáním</h2>
+      <div style="display:flex;flex-direction:column;gap:34px;margin-top:56px">
+        <div><div style="font:600 30px 'Public Sans',sans-serif;color:#5B4034">Úkoly na dnes</div><div style="font:400 27px/1.45 'Public Sans',sans-serif;color:#5E5049;margin-top:10px">Veterinář, předání, doplnění krmiva. Odškrtává se jedním tapnutím.</div></div>
+        <div><div style="font:600 30px 'Public Sans',sans-serif;color:#5B4034">Schvalování obsahu</div><div style="font:400 27px/1.45 'Public Sans',sans-serif;color:#5E5049;margin-top:10px">Fotky a příběhy od dočasek projdou kontrolou, než jdou na sítě.</div></div>
+        <div><div style="font:600 30px 'Public Sans',sans-serif;color:#5B4034">Kalendář a léčba</div><div style="font:400 27px/1.45 'Public Sans',sans-serif;color:#5E5049;margin-top:10px">Sdílený týden a odpočet dávek u každého psa, viditelný celému týmu.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s5" data-label="Dočasná péče" data-screen-label="05" data-speaker-notes="Dočaska otevře aplikaci a vidí jednoho psa: svého. Zápis dne trvá půl minuty." style="width:100%;height:100%;background:#5B4034;color:#FDF9F2;padding:100px 120px;display:flex;gap:110px;align-items:center">
+    <div style="flex:1">
+      <div style="font:600 24px/1 'Public Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:rgba(253,249,242,.55)">Dočasná péče</div>
+      <h2 style="font:400 84px/1.08 Newsreader,serif;margin:32px 0 0;letter-spacing:-.015em">Jeden pes,<br>jedna obrazovka</h2>
+      <p style="font:400 30px/1.5 'Public Sans',sans-serif;color:rgba(253,249,242,.78);margin:36px 0 0;max-width:900px;text-wrap:pretty">Dočaska není zaměstnanec. Aplikace se jí neptá na nic, co nemusí — ukáže dnešní péči, lék, který čeká na potvrzení, a dvě tlačítka.</p>
+      <div style="display:flex;flex-direction:column;gap:30px;margin-top:56px">
+        <div style="display:flex;gap:26px;align-items:baseline"><div style="font:400 34px/1 Newsreader,serif;color:#E3C05A;width:60px;flex:none">01</div><div style="font:400 28px/1.45 'Public Sans',sans-serif">Nálada, krmení, léky a poznámka — čtyři tapnutí a věta.</div></div>
+        <div style="display:flex;gap:26px;align-items:baseline"><div style="font:400 34px/1 Newsreader,serif;color:#E3C05A;width:60px;flex:none">02</div><div style="font:400 28px/1.45 'Public Sans',sans-serif">Odpočet léčby: zbývají 2 dny, 4 ze 6 dávek potvrzeno.</div></div>
+        <div style="display:flex;gap:26px;align-items:baseline"><div style="font:400 34px/1 Newsreader,serif;color:#E3C05A;width:60px;flex:none">03</div><div style="font:400 28px/1.45 'Public Sans',sans-serif">Zápisy se stanou historií psa, kterou dostane adoptující.</div></div>
+      </div>
+    </div>
+    <div style="width:560px;height:880px;flex:none;background:#FDF9F2;color:#33231C;border-radius:56px;padding:46px 40px;display:flex;flex-direction:column;box-shadow:0 40px 90px rgba(20,12,8,.35)">
+      <div style="font:600 20px/1 'Public Sans',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#A3937F">Deník · Shebby</div>
+      <div style="font:400 46px/1.1 Newsreader,serif;margin-top:20px">Jak dnes Shebby<br>zvládla den?</div>
+      <div style="font:600 18px/1 'Public Sans',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#A3937F;margin-top:38px">Nálada</div>
+      <div style="display:flex;gap:12px;margin-top:16px">
+        <div style="flex:1;text-align:center;padding:20px 6px;border-radius:20px;background:#5B4034;color:#FDF9F2;font:600 20px 'Public Sans',sans-serif">Klidná</div>
+        <div style="flex:1;text-align:center;padding:20px 6px;border-radius:20px;background:#FFFFFF;border:1px solid rgba(91,64,52,.12);font:600 20px 'Public Sans',sans-serif;color:#5E5049">Hravá</div>
+        <div style="flex:1;text-align:center;padding:20px 6px;border-radius:20px;background:#FFFFFF;border:1px solid rgba(91,64,52,.12);font:600 20px 'Public Sans',sans-serif;color:#5E5049">Nervózní</div>
+      </div>
+      <div style="font:600 18px/1 'Public Sans',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#A3937F;margin-top:36px">Odškrtni, co je hotové</div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-top:16px">
+        <div style="background:#FFFFFF;border:1px solid rgba(91,64,52,.35);border-radius:20px;padding:20px 24px;display:flex;align-items:center;gap:18px"><div style="width:28px;height:28px;border-radius:9px;background:#5B4034;flex:none;display:flex;align-items:center;justify-content:center;color:#FDF9F2;font:700 16px 'Public Sans',sans-serif">✓</div><div style="flex:1;font:500 23px 'Public Sans',sans-serif">Ranní krmení</div><div style="font:400 19px 'Public Sans',sans-serif;color:#A3937F">1 porce</div></div>
+        <div style="background:#FFFFFF;border:1px solid rgba(91,64,52,.35);border-radius:20px;padding:20px 24px;display:flex;align-items:center;gap:18px"><div style="width:28px;height:28px;border-radius:9px;background:#5B4034;flex:none;display:flex;align-items:center;justify-content:center;color:#FDF9F2;font:700 16px 'Public Sans',sans-serif">✓</div><div style="flex:1;font:500 23px 'Public Sans',sans-serif">Léky</div><div style="font:400 19px 'Public Sans',sans-serif;color:#A3937F">Enroxil</div></div>
+        <div style="background:#FFFFFF;border:1px solid rgba(91,64,52,.1);border-radius:20px;padding:20px 24px;display:flex;align-items:center;gap:18px"><div style="width:28px;height:28px;border-radius:9px;border:2px solid rgba(91,64,52,.3);flex:none"></div><div style="flex:1;font:500 23px 'Public Sans',sans-serif">Venčení 2× denně</div><div style="font:400 19px 'Public Sans',sans-serif;color:#A3937F">45 + 30</div></div>
+      </div>
+      <div style="margin-top:32px;background:#FFFFFF;border:1px solid rgba(91,64,52,.14);border-radius:22px;padding:24px;font:400 22px/1.5 'Public Sans',sans-serif;color:#8C7B72;flex:1">Snědla obě porce, na vodítku už netahá…</div>
+      <div style="margin-top:26px;background:#5B4034;border-radius:999px;padding:26px;text-align:center;font:600 24px 'Public Sans',sans-serif;color:#FDF9F2">Uložit zápis</div>
+    </div>
+  </section>
+
+  <section id="s6" data-label="Psí přání" data-screen-label="06" data-speaker-notes="Psí přání jsou konkrétní věci s cenou. Platba proběhne v aplikaci, dárce nikam neodchází." style="width:100%;height:100%;background:#FDF9F2;color:#33231C;padding:100px 120px;display:flex;gap:80px;align-items:center">
+    <div style="width:500px;flex:none">
+      <div style="font:600 24px/1 'Public Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#A3937F">Patron a dárce</div>
+      <h2 style="font:400 80px/1.06 Newsreader,serif;margin:32px 0 0;letter-spacing:-.015em">Přání s cenou, ne výzva k daru</h2>
+      <p style="font:400 28px/1.5 'Public Sans',sans-serif;color:#5E5049;margin:34px 0 0;text-wrap:pretty">Granule, rehabilitace, zimní pelíšek. Každé přání má svého psa, částku a stav. Platba kartou nebo Apple Pay proběhne v aplikaci, poděkování řekne, co konkrétně dárce zaplatil.</p>
+    </div>
+    <div style="flex:1;display:flex;gap:44px;justify-content:flex-end">
+      <div style="width:470px;height:860px;flex:none;background:#FFFFFF;border:1px solid rgba(91,64,52,.14);border-radius:48px;padding:40px 34px;box-shadow:0 30px 70px rgba(42,28,22,.12)">
+        <div style="font:400 42px/1 Newsreader,serif">Psí přání</div>
+        <div style="font:400 21px/1.4 'Public Sans',sans-serif;color:#8C7B72;margin-top:14px">Konkrétní věci, které pejsci potřebují teď.</div>
+        <div style="display:flex;flex-direction:column;gap:18px;margin-top:30px">
+          <div style="background:#FDF9F2;border:1px solid rgba(91,64,52,.1);border-radius:26px;padding:26px">
+            <div style="font:600 24px/1.3 'Public Sans',sans-serif">Granule pro citlivé zažívání</div>
+            <div style="font:400 19px 'Public Sans',sans-serif;color:#8C7B72;margin-top:8px">Shebby · dočaska Litvínov</div>
+            <div style="height:9px;border-radius:5px;background:rgba(91,64,52,.1);margin-top:20px;overflow:hidden"><div style="height:100%;width:62%;background:#C9A227;border-radius:5px"></div></div>
+            <div style="display:flex;justify-content:space-between;margin-top:12px;font:500 19px 'Public Sans',sans-serif;color:#5E5049"><span>744 Kč</span><span style="color:#A3937F">z 1 200 Kč</span></div>
+          </div>
+          <div style="background:#FDF9F2;border:1px solid rgba(91,64,52,.1);border-radius:26px;padding:26px">
+            <div style="font:600 24px/1.3 'Public Sans',sans-serif">Rehabilitace kolena</div>
+            <div style="font:400 19px 'Public Sans',sans-serif;color:#8C7B72;margin-top:8px">Harry · 4 návštěvy</div>
+            <div style="height:9px;border-radius:5px;background:rgba(91,64,52,.1);margin-top:20px;overflow:hidden"><div style="height:100%;width:38%;background:#C9A227;border-radius:5px"></div></div>
+            <div style="display:flex;justify-content:space-between;margin-top:12px;font:500 19px 'Public Sans',sans-serif;color:#5E5049"><span>1 900 Kč</span><span style="color:#A3937F">z 5 000 Kč</span></div>
+          </div>
+          <div style="background:#FDF9F2;border:1px solid rgba(91,64,52,.1);border-radius:26px;padding:26px">
+            <div style="font:600 24px/1.3 'Public Sans',sans-serif">Zimní pelíšek a deka</div>
+            <div style="font:400 19px 'Public Sans',sans-serif;color:#8C7B72;margin-top:8px">Sofie · nová dočaska</div>
+            <div style="height:9px;border-radius:5px;background:rgba(91,64,52,.1);margin-top:20px;overflow:hidden"><div style="height:100%;width:85%;background:#C9A227;border-radius:5px"></div></div>
+            <div style="display:flex;justify-content:space-between;margin-top:12px;font:500 19px 'Public Sans',sans-serif;color:#5E5049"><span>680 Kč</span><span style="color:#A3937F">z 800 Kč</span></div>
+          </div>
+        </div>
+      </div>
+      <div style="width:470px;height:860px;flex:none;background:#5B4034;color:#FDF9F2;border-radius:48px;padding:40px 34px;display:flex;flex-direction:column;box-shadow:0 30px 70px rgba(42,28,22,.2)">
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+          <svg width="88" height="88" viewBox="0 0 24 24" fill="none"><path d="M12 20.5C7 17 3.5 14.2 3.5 10.4A4.4 4.4 0 0 1 12 8a4.4 4.4 0 0 1 8.5 2.4c0 3.8-3.5 6.6-8.5 10.1z" stroke="#E3C05A" stroke-width="1.3" stroke-linejoin="round"></path></svg>
+          <div style="font:400 46px/1.12 Newsreader,serif;margin-top:32px">Děkujeme, Shebby to ucítí zítra</div>
+          <div style="font:400 24px/1.55 'Public Sans',sans-serif;color:rgba(253,249,242,.78);margin-top:22px">Přání je splněné. Krmivo objednáme dnes a Klára dostane upozornění.</div>
+          <div style="margin-top:32px;background:rgba(253,249,242,.1);border:1px solid rgba(253,249,242,.2);border-radius:24px;padding:26px">
+            <div style="font:600 16px/1 'Public Sans',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(253,249,242,.55)">Co jsi právě zaplatil</div>
+            <div style="font:400 22px/1.55 'Public Sans',sans-serif;margin-top:14px">Granule na tři týdny. Klára nahraje foto, jak Shebby jí.</div>
+          </div>
+        </div>
+        <div style="background:#FDF9F2;color:#5B4034;border-radius:999px;padding:26px;text-align:center;font:600 24px 'Public Sans',sans-serif">Stát se patronem</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s7" data-label="Adopce" data-screen-label="07" data-speaker-notes="Adoptující vidí jednoho psa naplno, ne mřížku fotek. Žádost je krátká a bez podmínek se neodešle." style="width:100%;height:100%;background:#FDF9F2;color:#33231C;padding:100px 120px;display:flex;gap:110px;align-items:center">
+    <div style="width:560px;height:880px;flex:none;background:#FFFFFF;border:1px solid rgba(91,64,52,.14);border-radius:56px;overflow:hidden;box-shadow:0 40px 90px rgba(42,28,22,.14);display:flex;flex-direction:column">
+      <div style="height:380px;background:#F0E7D9;position:relative;display:flex;align-items:center;justify-content:center">
+        <div style="font:400 40px/1 Newsreader,serif;color:#C4B6A9">foto Harryho</div>
+        <div style="position:absolute;left:28px;top:28px;padding:12px 22px;border-radius:999px;background:rgba(253,249,242,.92);font:600 19px 'Public Sans',sans-serif;color:#5B4034">Připraven k adopci</div>
+      </div>
+      <div style="padding:36px 34px;display:flex;flex-direction:column;flex:1">
+        <div style="display:flex;align-items:baseline;gap:16px"><div style="font:400 52px/1 Newsreader,serif">Harry</div><div style="font:400 22px 'Public Sans',sans-serif;color:#A3937F">6 let · 26 kg</div></div>
+        <div style="font:400 24px/1.55 'Public Sans',sans-serif;color:#5E5049;margin-top:18px">Staford, který se naučil, že ruce nejsou nebezpečné. Miluje vodu, dlouhé chůze a spánek na gauči.</div>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:24px">
+          <div style="padding:12px 20px;border-radius:999px;background:rgba(91,64,52,.07);font:600 19px 'Public Sans',sans-serif;color:#5B4034">Kastrovaný</div>
+          <div style="padding:12px 20px;border-radius:999px;background:rgba(91,64,52,.07);font:600 19px 'Public Sans',sans-serif;color:#5B4034">Bez dětí do 10 let</div>
+          <div style="padding:12px 20px;border-radius:999px;background:rgba(91,64,52,.07);font:600 19px 'Public Sans',sans-serif;color:#5B4034">Zahrada</div>
+        </div>
+        <div style="margin-top:auto;background:#5B4034;border-radius:999px;padding:26px;text-align:center;font:600 24px 'Public Sans',sans-serif;color:#FDF9F2">Chci se seznámit</div>
+        <div style="font:400 19px/1.5 'Public Sans',sans-serif;color:#A3937F;text-align:center;margin-top:16px">Před žádostí si prosím přečti podmínky adopce</div>
+      </div>
+    </div>
+    <div style="flex:1">
+      <div style="font:600 24px/1 'Public Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#A3937F">Adoptující</div>
+      <h2 style="font:400 84px/1.08 Newsreader,serif;margin:32px 0 0;letter-spacing:-.015em">Jeden pes<br>naplno, ne<br>mřížka fotek</h2>
+      <div style="display:flex;flex-direction:column;gap:34px;margin-top:56px">
+        <div><div style="font:600 30px 'Public Sans',sans-serif;color:#5B4034">Poctivé podmínky předem</div><div style="font:400 27px/1.45 'Public Sans',sans-serif;color:#5E5049;margin-top:10px">Bez dětí, se zahradou, bez jiných psů. Napsané dřív, než někdo vyplní žádost.</div></div>
+        <div><div style="font:600 30px 'Public Sans',sans-serif;color:#5B4034">Krátká žádost</div><div style="font:400 27px/1.45 'Public Sans',sans-serif;color:#5E5049;margin-top:10px">Bydlení, domácnost, pár řádků. Odeslat nelze bez potvrzení podmínek adopce.</div></div>
+        <div><div style="font:600 30px 'Public Sans',sans-serif;color:#5B4034">Ústí do práce koordinátorky</div><div style="font:400 27px/1.45 'Public Sans',sans-serif;color:#5E5049;margin-top:10px">Žádost se objeví v profilu psa se stavem: čeká, návštěva, zamítnuto.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s8" data-label="Vizuální jazyk" data-screen-label="08" data-speaker-notes="Paleta a typografie vychází z loga: hnědá, zlatá, krémová. Newsreader na jména a nadpisy, Public Sans na rozhraní." style="width:100%;height:100%;background:#FDF9F2;color:#33231C;padding:100px 120px;display:flex;flex-direction:column;gap:64px;justify-content:center">
+    <div>
+      <div style="font:600 24px/1 'Public Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#A3937F">Vizuální jazyk</div>
+      <h2 style="font:400 88px/1.08 Newsreader,serif;margin:32px 0 0;letter-spacing:-.015em">Z loga, ne z šablony</h2>
+    </div>
+    <div style="display:flex;gap:32px">
+      <div style="flex:1;background:#5B4034;border-radius:26px;padding:36px;color:#FDF9F2;height:220px;display:flex;flex-direction:column;justify-content:flex-end"><div style="font:600 26px 'Public Sans',sans-serif">Hnědá</div><div style="font:400 24px 'Public Sans',sans-serif;color:rgba(253,249,242,.7);margin-top:8px">#5B4034</div></div>
+      <div style="flex:1;background:#C9A227;border-radius:26px;padding:36px;color:#33231C;height:220px;display:flex;flex-direction:column;justify-content:flex-end"><div style="font:600 26px 'Public Sans',sans-serif">Zlatá</div><div style="font:400 24px 'Public Sans',sans-serif;color:rgba(51,35,28,.7);margin-top:8px">#C9A227</div></div>
+      <div style="flex:1;background:#FFFFFF;border:1px solid rgba(91,64,52,.14);border-radius:26px;padding:36px;height:220px;display:flex;flex-direction:column;justify-content:flex-end"><div style="font:600 26px 'Public Sans',sans-serif">Krémová</div><div style="font:400 24px 'Public Sans',sans-serif;color:#8C7B72;margin-top:8px">#FDF9F2</div></div>
+      <div style="flex:1;background:#F0E7D9;border-radius:26px;padding:36px;height:220px;display:flex;flex-direction:column;justify-content:flex-end"><div style="font:600 26px 'Public Sans',sans-serif">Papír</div><div style="font:400 24px 'Public Sans',sans-serif;color:#8C7B72;margin-top:8px">#F0E7D9</div></div>
+    </div>
+    <div style="display:flex;gap:32px">
+      <div style="flex:1;background:#FFFFFF;border:1px solid rgba(91,64,52,.12);border-radius:26px;padding:40px">
+        <div style="font:400 72px/1 Newsreader,serif">Shebby</div>
+        <div style="font:400 24px/1.4 'Public Sans',sans-serif;color:#8C7B72;margin-top:20px">Newsreader — jména psů, nadpisy, čísla. Navazuje na serif v logu.</div>
+      </div>
+      <div style="flex:1;background:#FFFFFF;border:1px solid rgba(91,64,52,.12);border-radius:26px;padding:40px">
+        <div style="font:600 40px/1.2 'Public Sans',sans-serif">Zapsat den · Splnit přání</div>
+        <div style="font:400 24px/1.4 'Public Sans',sans-serif;color:#8C7B72;margin-top:20px">Public Sans — rozhraní, tlačítka, popisky. Čitelné i v malých velikostech.</div>
+      </div>
+      <div style="flex:1;background:#FFFFFF;border:1px solid rgba(91,64,52,.12);border-radius:26px;padding:40px">
+        <div style="font:400 34px/1.35 Newsreader,serif;color:#5B4034">Láska, co vrtí ocasem</div>
+        <div style="font:400 24px/1.4 'Public Sans',sans-serif;color:#8C7B72;margin-top:20px">Tón: vřelý a osobní. Bez emoji v rozhraní, bez korporátní hantýrky.</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="s9" data-label="Co dál" data-screen-label="09" data-speaker-notes="Co chybí a co potřebujeme od Hafanofu, aby se z prototypu stala aplikace." style="width:100%;height:100%;background:#5B4034;color:#FDF9F2;padding:110px 120px;display:flex;flex-direction:column;justify-content:space-between">
+    <div>
+      <div style="font:600 24px/1 'Public Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:rgba(253,249,242,.55)">Co dál</div>
+      <h2 style="font:400 92px/1.08 Newsreader,serif;margin:34px 0 0;letter-spacing:-.015em">Tři věci, které rozhodnou</h2>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:36px">
+      <div style="background:rgba(253,249,242,.1);border:1px solid rgba(253,249,242,.2);border-radius:28px;padding:44px">
+        <div style="font:400 34px/1 Newsreader,serif;color:#E3C05A">01</div>
+        <div style="font:600 30px/1.25 'Public Sans',sans-serif;margin-top:24px">Fotky psů</div>
+        <div style="font:400 26px/1.5 'Public Sans',sans-serif;color:rgba(253,249,242,.75);margin-top:14px">Prototyp má prázdná místa. Reálné fotky změní dojem z celé aplikace.</div>
+      </div>
+      <div style="background:rgba(253,249,242,.1);border:1px solid rgba(253,249,242,.2);border-radius:28px;padding:44px">
+        <div style="font:400 34px/1 Newsreader,serif;color:#E3C05A">02</div>
+        <div style="font:600 30px/1.25 'Public Sans',sans-serif;margin-top:24px">Směny dobrovolníků</div>
+        <div style="font:400 26px/1.5 'Public Sans',sans-serif;color:rgba(253,249,242,.75);margin-top:14px">Pátá role zatím chybí. Rota na venčení je připravená k návrhu.</div>
+      </div>
+      <div style="background:rgba(253,249,242,.1);border:1px solid rgba(253,249,242,.2);border-radius:28px;padding:44px">
+        <div style="font:400 34px/1 Newsreader,serif;color:#E3C05A">03</div>
+        <div style="font:600 30px/1.25 'Public Sans',sans-serif;margin-top:24px">Příjem pejska</div>
+        <div style="font:400 26px/1.5 'Public Sans',sans-serif;color:rgba(253,249,242,.75);margin-top:14px">Formulář s fotodokumentací a čipem — vstupní bod celého systému.</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end">
+      <div style="font:400 34px/1.4 Newsreader,serif;color:rgba(253,249,242,.8)">Láska, co vrtí ocasem</div>
+      <img src="./assets/logo-light.png" alt="Hafanof" style="width:140px;height:140px;border-radius:70px;display:block">
+    </div>
+  </section>
+
+</x-import>
+</x-dc>
+</body>
+</html>
