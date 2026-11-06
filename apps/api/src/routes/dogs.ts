@@ -160,6 +160,7 @@ export function dogRoutes(db: DB) {
       const status = str(req.query.status);
       if (status === "in_care") where.push(`d.status IN ('new','in_care','foster','for_adoption','reserved')`);
       else if (status === "ended") where.push(`d.status IN ('adopted','deceased','ended_other')`);
+      else if (status === "in_foster") where.push("d.id IN (SELECT dog_id FROM placements WHERE end_date IS NULL)");
       else if (status) {
         assertOneOf(status, DOG_STATUSES, "status");
         where.push("d.status = ?");

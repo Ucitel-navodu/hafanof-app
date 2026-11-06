@@ -23,3 +23,10 @@ The design medium is **HTML/CSS/JS** — these are prototypes, not production co
 - `README.md` — this file
 - `chats/` — conversation transcripts (read these!)
 - `project/` — the `Hafanof team app design` project files (HTML prototypes, assets, components)
+
+---
+
+## Current implementation (2026-11)
+
+The internal evidence system from *Funkční zadání 1.0* lives in `apps/api` + `apps/web`;
+see `apps/README.md` and `docs/zadani-1.0-stav.md`. The Expo prototype in `apps/mobile` + `apps/server` is frozen.
