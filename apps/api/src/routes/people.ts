@@ -1,11 +1,15 @@
 import { Router } from "express";
 import type { DB } from "../db";
-import { PERSON_ROLES, tx } from "../db";
+import { PERSON_KINDS, PERSON_ROLES, tx } from "../db";
 import { HttpError, requireLevel } from "../auth";
-import { assertDate, createAudited, getRow, pick, requireFields, today, updateAudited } from "../audit";
+import { assertDate, assertOneOf, createAudited, getRow, pick, requireFields, today, updateAudited } from "../audit";
 import { h, intParam, optInt, str } from "./util";
 
 const PERSON_FIELDS = [
+  "kind",
+  "ico",
+  "dic",
+  "contact_person",
   "first_name",
   "last_name",
   "phone",
@@ -75,6 +79,7 @@ export function peopleRoutes(db: DB) {
       requireLevel(req, "people", "write");
       requireFields(req.body, ["first_name"]);
       assertDate(req.body.gdpr_consent_at, "gdpr_consent_at");
+      assertOneOf(req.body.kind, PERSON_KINDS, "kind");
       const data = pick(req.body, PERSON_FIELDS);
       data.roles = normaliseRoles(req.body.roles) ?? "[]";
       data.last_name = data.last_name ?? "";
@@ -121,6 +126,7 @@ export function peopleRoutes(db: DB) {
       const id = intParam(req);
       requireLevel(req, "people", "write");
       assertDate(req.body.gdpr_consent_at, "gdpr_consent_at");
+      assertOneOf(req.body.kind, PERSON_KINDS, "kind");
       const data = pick(req.body, PERSON_FIELDS);
       const roles = normaliseRoles(req.body.roles);
       if (roles) data.roles = roles;

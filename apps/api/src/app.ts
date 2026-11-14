@@ -2,23 +2,21 @@ import express, { type NextFunction, type Request, type Response } from "express
 import fs from "node:fs";
 import path from "node:path";
 import { MulterError } from "multer";
-import { openDb, type DB } from "./db";
+import type { DB } from "./db";
+import { openDb } from "./database";
 import { HttpError, loadUser } from "./auth";
+import { MODULE_LIST } from "./modules";
+import type { ModuleContext, Paths } from "./modules/types";
 import { dogRoutes } from "./routes/dogs";
 import { documentRoutes } from "./routes/documents";
 import { peopleRoutes } from "./routes/people";
 import { adoptionRoutes, placementRoutes } from "./routes/adoptions";
-import { calendarRoutes, taskRoutes } from "./routes/tasks";
-import {
-  adminRoutes,
-  auditRoutes,
-  authRoutes,
-  dashboardRoutes,
-  searchRoutes,
-  statsRoutes,
-  userRoutes,
-  type Paths,
-} from "./routes/misc";
+import { taskRoutes } from "./routes/tasks";
+import { authRoutes } from "./routes/auth";
+import { userRoutes } from "./routes/users";
+import { auditRoutes } from "./routes/auditlog";
+import { adminRoutes } from "./routes/admin";
+import { alertRoutes, calendarRoutes, dashboardRoutes, searchRoutes, statsRoutes } from "./routes/overview";
 
 export interface AppOptions {
   dataDir: string;
@@ -29,19 +27,22 @@ export interface AppOptions {
   secureCookies?: boolean;
 }
 
-export function createApp(opts: AppOptions): { app: express.Express; db: DB } {
+export function createApp(opts: AppOptions): { app: express.Express; db: DB; ctx: ModuleContext } {
   const db = openDb(opts.dataDir);
   const paths: Paths = {
+    dataDir: opts.dataDir,
     uploadsDir: opts.uploadsDir ?? path.join(opts.dataDir, "uploads"),
     backupsDir: opts.backupsDir ?? path.join(opts.dataDir, "..", "backups"),
     secureCookies: opts.secureCookies ?? false,
   };
+  const ctx: ModuleContext = { db, paths };
 
   const app = express();
   app.set("trust proxy", "loopback");
   app.disable("x-powered-by");
+  // ── Bezpečnostní hlavičky (sekce 21) ──
   app.use((_req, res, next) => {
-    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     res.setHeader("Referrer-Policy", "same-origin");
     res.setHeader("X-Content-Type-Options", "nosniff");
     if (paths.secureCookies) res.setHeader("Strict-Transport-Security", "max-age=31536000");
@@ -60,6 +61,7 @@ export function createApp(opts: AppOptions): { app: express.Express; db: DB } {
   app.get("/api/health", (_req, res) => res.json({ ok: true }));
   app.use("/api/auth", authRoutes(db, paths));
   app.use("/api/dashboard", dashboardRoutes(db));
+  app.use("/api/alerts", alertRoutes(db));
   app.use("/api/search", searchRoutes(db));
   app.use("/api/dogs", dogRoutes(db));
   app.use("/api/documents", documentRoutes(db, paths.uploadsDir));
@@ -72,6 +74,8 @@ export function createApp(opts: AppOptions): { app: express.Express; db: DB } {
   app.use("/api/audit", auditRoutes(db));
   app.use("/api/users", userRoutes(db));
   app.use("/api/admin", adminRoutes(db, paths));
+  // Routery modulů (finance, spolek, sklad…) — každý pod vlastní cestou /api/<path>.
+  for (const m of MODULE_LIST) for (const route of m.routes ?? []) app.use(`/api/${route.path}`, route.router(ctx));
   app.use("/api", (_req, _res, next) => next(new HttpError(404, "Neznámý endpoint")));
 
   if (opts.webDir && fs.existsSync(opts.webDir)) {
@@ -83,6 +87,7 @@ export function createApp(opts: AppOptions): { app: express.Express; db: DB } {
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     if (err instanceof HttpError) return res.status(err.status).json({ error: err.message });
     if (err instanceof MulterError) return res.status(400).json({ error: `Chyba nahrávání: ${err.message}` });
+    if (err instanceof SyntaxError && "body" in err) return res.status(400).json({ error: "Neplatný JSON" });
     const msg = err instanceof Error ? err.message : String(err);
     if (/UNIQUE constraint/.test(msg)) return res.status(409).json({ error: "Záznam už existuje" });
     if (/FOREIGN KEY|CHECK constraint/.test(msg)) return res.status(400).json({ error: "Neplatná vazba nebo hodnota" });
@@ -90,5 +95,5 @@ export function createApp(opts: AppOptions): { app: express.Express; db: DB } {
     res.status(500).json({ error: "Interní chyba serveru" });
   });
 
-  return { app, db };
+  return { app, db, ctx };
 }

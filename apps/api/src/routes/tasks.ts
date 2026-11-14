@@ -1,7 +1,7 @@
 import { Router, type Request } from "express";
 import type { DB } from "../db";
 import { tx } from "../db";
-import { HttpError, atLeast, fosterDogIds, level, requireLevel, requireUser } from "../auth";
+import { HttpError, fosterDogIds, level, requireLevel, requireUser, type AuthUser } from "../auth";
 import { addDays, assertDate, assertOneOf, createAudited, getRow, pick, requireFields, today, updateAudited } from "../audit";
 import { h, intParam, optInt, str } from "./util";
 
@@ -34,8 +34,7 @@ const TASK_SELECT = `SELECT t.*, u.name AS assignee_name, c.name AS created_by_n
   FROM tasks t LEFT JOIN users u ON u.id = t.assignee_user_id LEFT JOIN users c ON c.id = t.created_by`;
 
 /** Úkoly, které uživatel vidí. "own" = přidělené jemu nebo jím vytvořené. */
-export function visibleTasks(db: DB, req: Request, extraWhere = "1", args: (string | number)[] = []): Row[] {
-  const user = requireUser(req);
+export function visibleTasks(db: DB, user: AuthUser, extraWhere = "1", args: (string | number)[] = []): Row[] {
   const l = level(user, "tasks");
   if (l === "none") return [];
   const scope = l === "own" ? "(t.assignee_user_id = ? OR t.created_by = ?)" : "1";
@@ -46,7 +45,7 @@ export function visibleTasks(db: DB, req: Request, extraWhere = "1", args: (stri
 }
 
 function loadTask(db: DB, req: Request, id: number): Row {
-  const t = visibleTasks(db, req, "t.id = ?", [id])[0];
+  const t = visibleTasks(db, requireUser(req), "t.id = ?", [id])[0];
   if (!t) throw new HttpError(404, "Úkol nenalezen");
   return t;
 }
@@ -68,7 +67,7 @@ export function taskRoutes(db: DB) {
       const refType = str(req.query.ref_type);
       const refId = optInt(req.query.ref_id);
       if (refType && refId) (where.push("t.ref_type = ? AND t.ref_id = ?"), args.push(refType, refId));
-      const rows = visibleTasks(db, req, where.length ? where.join(" AND ") : "1", args);
+      const rows = visibleTasks(db, req.user!, where.length ? where.join(" AND ") : "1", args);
       const t = today();
       res.json(rows.map((x) => ({ ...x, overdue: !!x.due_date && String(x.due_date) < t && ["open", "in_progress"].includes(String(x.status)) })));
     }),
@@ -174,49 +173,3 @@ export function taskRoutes(db: DB) {
 
   return r;
 }
-
-/** Kalendář (sekce 12): úkoly, zdravotní termíny, adopční návštěvy. */
-export function calendarItems(db: DB, req: Request, from: string, to: string) {
-  const user = requireUser(req);
-  const items: Row[] = [];
-  for (const t of visibleTasks(db, req, "t.due_date BETWEEN ? AND ? AND t.status IN ('open','in_progress')", [from, to])) {
-    items.push({ date: t.due_date, type: t.kind === "post_adoption_check" ? "check" : t.kind === "adoption_visit" ? "visit" : "task", title: t.title, task_id: t.id, dog_id: t.dog_id ?? null, priority: t.priority });
-  }
-  const hl = level(user, "health");
-  if (hl !== "none") {
-    const scope =
-      hl === "own" ? `AND h.dog_id IN (${fosterDogIds(db, user).join(",") || "0"})` : "";
-    const health = db
-      .prepare(
-        `SELECT h.*, d.name AS dog_name FROM health_records h JOIN dogs d ON d.id = h.dog_id
-         WHERE d.status NOT IN ('adopted','deceased','ended_other') ${scope}
-           AND ((h.next_due BETWEEN ? AND ?) OR (h.valid_until BETWEEN ? AND ?))`,
-      )
-      .all(from, to, from, to) as Row[];
-    for (const r of health) {
-      if (r.next_due && String(r.next_due) >= from && String(r.next_due) <= to)
-        items.push({ date: r.next_due, type: "health", title: `${r.dog_name}: kontrola / další dávka${r.name ? " – " + r.name : ""}`, dog_id: r.dog_id });
-      if (r.valid_until && String(r.valid_until) >= from && String(r.valid_until) <= to)
-        items.push({ date: r.valid_until, type: "health", title: `${r.dog_name}: končí platnost – ${r.name ?? r.kind}`, dog_id: r.dog_id });
-    }
-  }
-  items.sort((a, b) => String(a.date).localeCompare(String(b.date)));
-  return items;
-}
-
-export function calendarRoutes(db: DB) {
-  const r = Router();
-  r.get(
-    "/",
-    h((req, res) => {
-      requireUser(req);
-      const from = str(req.query.from) ?? today();
-      const to = str(req.query.to) ?? addDays(from, 31);
-      assertDate(from, "from");
-      assertDate(to, "to");
-      res.json(calendarItems(db, req, from, to));
-    }),
-  );
-  return r;
-}
-

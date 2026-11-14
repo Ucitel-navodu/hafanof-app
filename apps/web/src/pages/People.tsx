@@ -3,11 +3,16 @@ import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { patch, post, useApi } from "../api";
 import { useAuth } from "../auth";
 import { ADOPTION_STATUS, DOG_STATUS, PERSON_ROLE, fmtDate, fullName, todayIso } from "../labels";
+import { allowed, collect } from "../modules";
 import { Badge, Card, Empty, ErrorBox, Form, KV, Loading, Modal, PageHead, type FieldDef } from "../ui";
 
 const PERSON_FIELDS: FieldDef[] = [
-  { name: "first_name", label: "Jméno", required: true },
+  { name: "kind", label: "Typ", type: "select", options: { person: "Osoba", organization: "Organizace (firma, klinika, spolek)" }, required: true },
+  { name: "first_name", label: "Jméno / název organizace", required: true },
   { name: "last_name", label: "Příjmení" },
+  { name: "ico", label: "IČO (u organizace)" },
+  { name: "dic", label: "DIČ (u organizace)" },
+  { name: "contact_person", label: "Kontaktní osoba (u organizace)" },
   { name: "phone", label: "Telefon", type: "tel" },
   { name: "email", label: "E-mail", type: "email" },
   { name: "address", label: "Adresa", wide: true },
@@ -73,7 +78,7 @@ export function PeopleList() {
         <Modal title="Nová osoba" onClose={() => setAdding(false)}>
           <Form
             fields={PERSON_FIELDS}
-            initial={{ roles: role ? [role] : [] }}
+            initial={{ kind: "person", roles: role ? [role] : [] }}
             onCancel={() => setAdding(false)}
             onSubmit={async (v) => {
               const p = await post("/api/people", { ...v, foster_capacity: v.foster_capacity ? Number(v.foster_capacity) : null });
@@ -112,6 +117,12 @@ export function PersonDetail() {
         <Card title="Kontakt">
           <KV
             items={[
+              ...(p.kind === "organization"
+                ? ([
+                    ["IČO / DIČ", [p.ico, p.dic].filter(Boolean).join(" / ")],
+                    ["Kontaktní osoba", p.contact_person],
+                  ] as [string, any][])
+                : []),
               ["Telefon", p.phone && <a href={`tel:${p.phone}`}>{p.phone}</a>],
               ["E-mail", p.email && <a href={`mailto:${p.email}`}>{p.email}</a>],
               ["Adresa", p.address],
@@ -196,6 +207,13 @@ export function PersonDetail() {
             </ul>
           )}
         </Card>
+        {collect("personSections")
+          .filter((sec) => allowed(can, sec))
+          .map((sec) => (
+            <div key={sec.key} className="span-2">
+              {sec.render(p, reload)}
+            </div>
+          ))}
       </div>
       {modal === "edit" && (
         <Modal title="Upravit osobu" onClose={() => setModal(null)}>

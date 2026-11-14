@@ -5,6 +5,8 @@ import { useAuth } from "../auth";
 import { ADOPTION_FLOW, ADOPTION_STATUS, DOC_STATUS, TASK_STATUS, fmtDate, todayIso } from "../labels";
 import { Badge, Card, ErrorBox, Form, KV, Loading, Modal, PageHead, toFormData, type FieldDef } from "../ui";
 import { NewApplicationModal } from "./DogDetail";
+import { DocLink } from "../components/DocLink";
+import { allowed, collect } from "../modules";
 import { CommunicationModal } from "./People";
 
 export function Adoptions() {
@@ -149,11 +151,18 @@ function AdoptionDetail({ id, onClose }: { id: number; onClose: () => void }) {
               ...(a.rejection_reason ? ([["Interní důvod zamítnutí", a.rejection_reason]] as [string, any][]) : []),
             ]}
           />
-          {write && (
-            <button className="btn small ghost" onClick={() => setModal("edit")}>
-              Upravit dotazník a poznámky
-            </button>
-          )}
+          <div className="btn-row">
+            {write && (
+              <button className="btn small ghost" onClick={() => setModal("edit")}>
+                Upravit dotazník a poznámky
+              </button>
+            )}
+            {collect("adoptionActions")
+              .filter((x) => allowed(can, x))
+              .map((x) => (
+                <span key={x.key}>{x.render(a, reload)}</span>
+              ))}
+          </div>
 
           <h3>Komunikace</h3>
           {a.communications.length === 0 ? (
@@ -183,7 +192,7 @@ function AdoptionDetail({ id, onClose }: { id: number; onClose: () => void }) {
             <ul className="list compact">
               {a.documents.map((d: any) => (
                 <li key={d.id} className="row">
-                  <span className="grow">{d.stored_name ? <a href={`/api/documents/${d.id}/file`} target="_blank" rel="noreferrer">{d.title}</a> : d.title}</span>
+                  <span className="grow">{d.stored_name ? <DocLink doc={d} /> : d.title}</span>
                   <Badge tone={d.status === "signed" ? "green" : "gold"}>{DOC_STATUS[d.status]}</Badge>
                 </li>
               ))}

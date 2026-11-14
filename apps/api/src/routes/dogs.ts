@@ -93,7 +93,8 @@ export function serializeDog(dog: Row, l: Level): Row {
   const out: Row = { ...dog };
   const end = (dog.end_date as string | null) ?? today();
   out.days_in_care = Math.max(0, daysBetween(dog.intake_date as string, end));
-  out.photo_url = dog.photo_document_id ? `/api/documents/${dog.photo_document_id}/file` : null;
+  // Náhledová varianta (miniatura); když neexistuje, server vrátí originál.
+  out.photo_url = dog.photo_document_id ? `/api/documents/${dog.photo_document_id}/file?variant=thumb` : null;
   if (l === "basic") {
     return Object.fromEntries(Object.entries(out).filter(([k]) => BASIC_FIELDS.includes(k) || k === "photo_url"));
   }

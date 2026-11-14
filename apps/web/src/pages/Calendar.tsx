@@ -4,21 +4,27 @@ import { useApi } from "../api";
 import { addDays, fmtDate, todayIso } from "../labels";
 import { Badge, Card, Empty, Loading, PageHead } from "../ui";
 
-const TYPE: Record<string, [string, string]> = {
-  task: ["Úkol", "taupe"],
-  health: ["Zdraví", "red"],
-  visit: ["Adopční návštěva", "purple"],
-  check: ["Kontrola po adopci", "green"],
-};
+interface Item {
+  date: string;
+  type: string;
+  label: string;
+  tone: string;
+  title: string;
+  link?: string | null;
+  time?: string | null;
+}
 
 const WEEKDAY = ["neděle", "pondělí", "úterý", "středa", "čtvrtek", "pátek", "sobota"];
 
+/** Kalendář (sekce 12) — položky ze všech modulů: úkoly, zdraví, adopční návštěvy, směny, příspěvky, termíny spolku… */
 export function Calendar() {
   const [from, setFrom] = useState(todayIso());
   const to = addDays(from, 27);
-  const { data } = useApi<any[]>(`/api/calendar?from=${from}&to=${to}`);
-  const byDay = new Map<string, any[]>();
+  const { data } = useApi<Item[]>(`/api/calendar?from=${from}&to=${to}`);
+  const byDay = new Map<string, Item[]>();
   for (const i of data ?? []) byDay.set(i.date, [...(byDay.get(i.date) ?? []), i]);
+  const legend = new Map<string, [string, string]>();
+  for (const i of data ?? []) legend.set(i.type, [i.label, i.tone]);
 
   return (
     <>
@@ -39,13 +45,15 @@ export function Calendar() {
           </div>
         }
       />
-      <div className="legend">
-        {Object.entries(TYPE).map(([k, [l, tone]]) => (
-          <Badge key={k} tone={tone}>
-            {l}
-          </Badge>
-        ))}
-      </div>
+      {legend.size > 0 && (
+        <div className="legend">
+          {[...legend.entries()].map(([k, [l, tone]]) => (
+            <Badge key={k} tone={tone}>
+              {l}
+            </Badge>
+          ))}
+        </div>
+      )}
       {!data ? (
         <Loading />
       ) : byDay.size === 0 ? (
@@ -56,10 +64,9 @@ export function Calendar() {
             <ul className="list compact">
               {items.map((i, k) => (
                 <li key={k} className="row">
-                  <Badge tone={TYPE[i.type]?.[1]}>{TYPE[i.type]?.[0] ?? i.type}</Badge>
-                  <span className="grow">
-                    {i.task_id ? <Link to={`/ukoly?id=${i.task_id}`}>{i.title}</Link> : i.dog_id ? <Link to={`/psi/${i.dog_id}?tab=health`}>{i.title}</Link> : i.title}
-                  </span>
+                  <Badge tone={i.tone}>{i.label}</Badge>
+                  {i.time && <span className="muted small">{i.time}</span>}
+                  <span className="grow">{i.link ? <Link to={i.link}>{i.title}</Link> : i.title}</span>
                 </li>
               ))}
             </ul>

@@ -275,3 +275,10 @@ code { background: var(--nude); padding: 0 4px; border-radius: 4px; font-size: 1
   .more-sheet { display: block; position: fixed; inset: 0; z-index: 39; background: rgba(47, 42, 37, 0.35); }
   .more-panel { position: absolute; left: 0; right: 0; bottom: calc(64px + env(safe-area-inset-bottom)); background: var(--white); border-radius: 18px 18px 0 0; padding: 12px; display: flex; flex-direction: column; gap: 2px; }
 }
+
+/* Upozornění (sekce 18) */
+.sev { width: 10px; height: 10px; border-radius: 50%; flex: none; background: var(--muted); }
+.sev-red { background: var(--red); }
+.sev-gold { background: var(--gold); }
+.sev-muted { background: #c9bfb2; }
+.alerts > li { padding: 8px 0; }

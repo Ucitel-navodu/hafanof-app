@@ -1,7 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
 import { patch, useApi } from "../api";
 import { useAuth } from "../auth";
-import { DOC_CATEGORY, DOC_STATUS, ADOPTION_STATUS, DOG_STATUS, PRIORITY, fmtDate } from "../labels";
+import { ADOPTION_STATUS, DOG_STATUS, PRIORITY, fmtDate } from "../labels";
+import { AlertsCard } from "../components/AlertsCard";
+import { allowed, collect } from "../modules";
 import { Badge, Card, DogLink, Empty, ErrorBox, Loading, PageHead, Paw } from "../ui";
 
 function TaskRow({ t, onDone }: { t: any; onDone: () => void }) {
@@ -53,6 +55,14 @@ export function Dashboard() {
                 {can("tasks", "read") ? "+ Úkol" : "+ Požadavek"}
               </button>
             )}
+            {collect("quickActions")
+              .filter((a) => allowed(can, a))
+              .sort((a, b) => a.order - b.order)
+              .map((a) => (
+                <button key={a.key} className="btn" onClick={() => nav(a.to)}>
+                  {a.label}
+                </button>
+              ))}
           </div>
         }
       />
@@ -92,19 +102,7 @@ export function Dashboard() {
       )}
 
       <div className="grid-2">
-        {data.tasks_today && (
-          <Card title={`Úkoly po termínu (${data.tasks_overdue.length})`} className={data.tasks_overdue.length ? "alert" : ""}>
-            {data.tasks_overdue.length === 0 ? (
-              <Empty>Nic po termínu 👍</Empty>
-            ) : (
-              <ul className="list">
-                {data.tasks_overdue.map((t: any) => (
-                  <TaskRow key={t.id} t={t} onDone={reload} />
-                ))}
-              </ul>
-            )}
-          </Card>
-        )}
+        <AlertsCard />
         {data.tasks_today && (
           <Card title={`Dnešní úkoly (${data.tasks_today.length})`} actions={<Link to="/ukoly">Všechny úkoly →</Link>}>
             {data.tasks_today.length === 0 ? (
@@ -118,39 +116,20 @@ export function Dashboard() {
             )}
           </Card>
         )}
-        {data.health_upcoming && (
-          <Card title="Zdraví: kontroly, očkování, dávky" actions={<Link to="/kalendar">Kalendář →</Link>}>
-            {data.health_upcoming.length === 0 ? (
-              <Empty>Žádné blížící se termíny.</Empty>
-            ) : (
-              <ul className="list">
-                {data.health_upcoming.map((i: any, k: number) => (
-                  <li key={k} className="row">
-                    <span className={i.overdue ? "date overdue" : "date"}>{fmtDate(i.date)}</span>
-                    <Link className="grow" to={`/psi/${i.dog_id}?tab=health`}>
-                      {i.title}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {data.medications_active?.length > 0 && (
-              <>
-                <h3>Aktuálně podávané léky</h3>
-                <ul className="list">
-                  {data.medications_active.map((m: any) => (
-                    <li key={m.id} className="row">
-                      <DogLink id={m.dog_id} name={m.dog_name} />
-                      <span className="grow">
-                        {" "}
-                        – {m.name} {m.dose} {m.frequency && `(${m.frequency})`}
-                      </span>
-                      <span className="muted small">do {fmtDate(m.end_date)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
+        {data.medications_active?.length > 0 && (
+          <Card title="Aktuálně podávané léky">
+            <ul className="list">
+              {data.medications_active.map((m: any) => (
+                <li key={m.id} className="row">
+                  <DogLink id={m.dog_id} name={m.dog_name} />
+                  <span className="grow">
+                    {" "}
+                    – {m.name} {m.dose} {m.frequency && `(${m.frequency})`}
+                  </span>
+                  <span className="muted small">do {fmtDate(m.end_date)}</span>
+                </li>
+              ))}
+            </ul>
           </Card>
         )}
         {data.adoptions_pending && (
@@ -176,23 +155,12 @@ export function Dashboard() {
             )}
           </Card>
         )}
-        {data.documents_pending && data.documents_pending.length > 0 && (
-          <Card title="Dokumenty k doplnění / podpisu">
-            <ul className="list">
-              {data.documents_pending.map((d: any) => (
-                <li key={d.id} className="row">
-                  <div className="grow">
-                    {d.title} <span className="muted small">({DOC_CATEGORY[d.category]})</span>
-                    <div className="small">
-                      <DogLink id={d.dog_id} name={d.dog_name} />
-                    </div>
-                  </div>
-                  <Badge tone={d.status === "missing" ? "red" : "gold"}>{DOC_STATUS[d.status]}</Badge>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        )}
+        {collect("dashboardWidgets")
+          .filter((w) => allowed(can, w))
+          .sort((a, b) => a.order - b.order)
+          .map((w) => (
+            <div key={w.key}>{w.render()}</div>
+          ))}
       </div>
     </>
   );

@@ -1,5 +1,5 @@
-import { useState, type FormEvent, type ReactNode } from "react";
-import { Paw } from "./ui";
+import { useState, type FormEvent } from "react";
+import { collect, allowed } from "./modules";
 import { NavLink, Navigate, Route, Routes, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "./auth";
 import { USER_ROLE } from "./labels";
@@ -17,26 +17,15 @@ import { Admin } from "./pages/Admin";
 import { SearchPage } from "./pages/Search";
 import { Profile } from "./pages/Profile";
 
-type NavItem = { to: string; label: string; icon: ReactNode; module?: string; min?: "basic" | "own" | "read" | "write"; mobile?: boolean };
-const NAV: NavItem[] = [
-  { to: "/", label: "Můj Hafanof", icon: "⌂", mobile: true },
-  { to: "/psi", label: "Psi", icon: <Paw size={18} />, module: "dogs", min: "basic", mobile: true },
-  { to: "/ukoly", label: "Úkoly", icon: "✓", module: "tasks", min: "own", mobile: true },
-  { to: "/kalendar", label: "Kalendář", icon: "▦", mobile: true },
-  { to: "/adopce", label: "Adopce", icon: "♥", module: "adoptions" },
-  { to: "/osoby", label: "Osoby", icon: "☺", module: "people" },
-  { to: "/statistiky", label: "Statistiky", icon: "▤", module: "stats" },
-  { to: "/historie", label: "Historie změn", icon: "⟲", module: "audit" },
-  { to: "/sprava", label: "Správa", icon: "⚙", module: "users" },
-];
-
 function Shell() {
   const { me, logout, can } = useAuth();
   const nav = useNavigate();
   const loc = useLocation();
   const [q, setQ] = useState("");
   const [moreOpen, setMoreOpen] = useState(false);
-  const items = NAV.filter((n) => !n.module || can(n.module, n.min ?? "read"));
+  const items = collect("nav")
+    .filter((n) => allowed(can, n))
+    .sort((a, b) => a.order - b.order);
   const mobileItems = items.filter((n) => n.mobile);
   const moreItems = items.filter((n) => !n.mobile);
 
@@ -96,6 +85,9 @@ function Shell() {
             <Route path="/sprava" element={<Admin />} />
             <Route path="/hledat" element={<SearchPage />} />
             <Route path="/profil" element={<Profile />} />
+            {collect("routes").map((r) => (
+              <Route key={r.path} path={r.path} element={r.element} />
+            ))}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>

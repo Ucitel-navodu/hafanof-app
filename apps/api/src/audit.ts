@@ -1,8 +1,23 @@
 import type { DB } from "./db";
 import type { AuthUser } from "./auth";
 import { HttpError } from "./auth";
+import { pragueNow } from "./time";
 
 type Row = Record<string, unknown>;
+
+/** Druhy auditních záznamů. Moduly používají i export/import/anonymize/security. */
+export type AuditAction =
+  | "create"
+  | "update"
+  | "delete"
+  | "login"
+  | "logout"
+  | "backup"
+  | "restore"
+  | "export"
+  | "import"
+  | "anonymize"
+  | "security";
 const HIDDEN = new Set(["password_hash"]);
 
 function diff(before: Row | null, after: Row | null): Record<string, [unknown, unknown]> {
@@ -21,7 +36,7 @@ function diff(before: Row | null, after: Row | null): Record<string, [unknown, u
 export function audit(
   db: DB,
   user: AuthUser | undefined,
-  action: "create" | "update" | "delete" | "login" | "logout" | "backup" | "restore",
+  action: AuditAction,
   entity: string,
   entityId: number | null,
   opts: { before?: Row | null; after?: Row | null; dogId?: number | null; extra?: Row } = {},
@@ -127,7 +142,8 @@ export function addDogEvent(
   });
 }
 
-export const today = () => new Date().toISOString().slice(0, 10);
+/** Dnešní datum v Praze (ne UTC — jinak by po půlnoci SEČ byl „dnes“ ještě včerejšek). */
+export const today = () => pragueNow().date;
 
 export function addDays(date: string, days: number): string {
   const d = new Date(date + "T00:00:00Z");
