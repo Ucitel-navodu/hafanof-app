@@ -18,13 +18,19 @@ export const MODULES = [
   "audit",
   "users",
   "backup",
+  "finance", // sekce 13 + výdaje DP (10)
+  "association", // sekce 16 – spolek a administrativa
+  "inventory", // sekce 14 – sklad a vybavení
+  "volunteers", // sekce 11 – směny a akce dobrovolníků
+  "social", // sekce 15 – sociální sítě
+  "data", // export celé evidence, import, GDPR (sekce 21, 25, 8)
 ] as const;
 export type Module = (typeof MODULES)[number];
 
 /**
  * none  — modul není vidět
  * basic — jen nezbytné údaje (dobrovolník u psů)
- * own   — jen vlastní záznamy (dočaskář: svěřenci, dobrovolník: vlastní úkoly)
+ * own   — jen vlastní záznamy (dočaskář: svěřenci, dobrovolník: vlastní úkoly, tým: vlastní výdaje)
  * read  — čtení všeho
  * write — čtení i zápis
  */
@@ -34,22 +40,17 @@ const ORDER: Level[] = ["none", "basic", "own", "read", "write"];
 type Matrix = Record<Role, Partial<Record<Module, Level>>>;
 
 const ALL_WRITE = Object.fromEntries(MODULES.map((m) => [m, "write"])) as Record<Module, Level>;
+const ALL_READ = Object.fromEntries(MODULES.map((m) => [m, "read"])) as Record<Module, Level>;
 
+/**
+ * Matice oprávnění (sekce 2 a 24). Úplný popis včetně zdůvodnění je v docs/opravneni.md.
+ * Server ji vyhodnocuje u každého požadavku — skrytí tlačítek v UI je jen kosmetika.
+ */
 export const PERMISSIONS: Matrix = {
   admin: ALL_WRITE,
   director: { ...ALL_WRITE, users: "read", backup: "none" },
-  auditor: {
-    dogs: "read",
-    health: "read",
-    documents: "read",
-    people: "read",
-    adoptions: "read",
-    foster: "read",
-    tasks: "read",
-    stats: "read",
-    audit: "read",
-    users: "read",
-  },
+  // Revizor: čte vše včetně hospodaření a historie, nic nemění; může stahovat přehledy, ne importovat.
+  auditor: { ...ALL_READ, backup: "none" },
   team: {
     dogs: "write",
     health: "write",
@@ -59,9 +60,13 @@ export const PERMISSIONS: Matrix = {
     foster: "write",
     tasks: "write",
     stats: "read",
+    finance: "own", // zapisuje výdaje s doklady, vidí vlastní záznamy a součty nákladů na psa
+    inventory: "write",
+    volunteers: "write",
+    social: "write",
   },
-  foster: { dogs: "own", health: "own", documents: "own", tasks: "own" },
-  volunteer: { dogs: "basic", tasks: "own" },
+  foster: { dogs: "own", health: "own", documents: "own", tasks: "own", finance: "own" },
+  volunteer: { dogs: "basic", tasks: "own", volunteers: "own" },
 };
 
 export interface AuthUser {

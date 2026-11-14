@@ -3,6 +3,7 @@ import { patch, post, useApi } from "../api";
 import { useAuth } from "../auth";
 import { USER_ROLE, fmtDateTime } from "../labels";
 import { Badge, Card, ErrorBox, Form, Loading, Modal, PageHead, type FieldDef } from "../ui";
+import { allowed, collect } from "../modules";
 
 const ROLE_HELP: Record<string, string> = {
   admin: "Vše včetně správy uživatelů a záloh.",
@@ -94,14 +95,29 @@ export function Admin() {
       {settings && (
         <Card title="Nastavení">
           <Form
-            fields={[{ name: "days", label: "Kontroly po adopci (dny od adopce, oddělené čárkou)", hint: "Platí pro nově dokončené adopce." }]}
-            initial={{ days: settings.post_adoption_check_days.join(", ") }}
+            fields={[
+              { name: "days", label: "Kontroly po adopci (dny od adopce, oddělené čárkou)", hint: "Platí pro nově dokončené adopce." },
+              { name: "health_alert_days", label: "Hlásit zdravotní termíny (dní dopředu)", type: "number" },
+              { name: "adoption_response_days", label: "Žádost o adopci bez reakce po (dnech)", type: "number" },
+              { name: "missing_chip_days", label: "Upozornit na chybějící čip po (dnech v péči)", type: "number" },
+            ]}
+            initial={{
+              days: settings.post_adoption_check_days.join(", "),
+              health_alert_days: settings.health_alert_days,
+              adoption_response_days: settings.adoption_response_days,
+              missing_chip_days: settings.missing_chip_days,
+            }}
             onSubmit={async (v) => {
               const days = String(v.days)
                 .split(",")
                 .map((s) => Number(s.trim()))
                 .filter((n) => n > 0);
-              await patch("/api/admin/settings", { post_adoption_check_days: days });
+              await patch("/api/admin/settings", {
+                post_adoption_check_days: days,
+                health_alert_days: Number(v.health_alert_days),
+                adoption_response_days: Number(v.adoption_response_days),
+                missing_chip_days: Number(v.missing_chip_days),
+              });
               reloadSettings();
             }}
           />
@@ -139,6 +155,15 @@ export function Admin() {
         </Card>
       )}
 
+      {collect("adminSections")
+        .filter((sec) => allowed(can, sec))
+        .sort((a, b) => a.order - b.order)
+        .map((sec) => (
+          <div key={sec.key}>{sec.render()}</div>
+        ))}
+
+      <JobsCard />
+
       {edit && (
         <Modal title={edit.id ? `Upravit: ${edit.name}` : "Nový uživatel"} onClose={() => setEdit(null)}>
           <Form
@@ -156,5 +181,44 @@ export function Admin() {
         </Modal>
       )}
     </>
+  );
+}
+
+/** Naplánované úlohy (zálohy, e-mailové souhrny…): poslední běh a ruční spuštění. */
+function JobsCard() {
+  const { can } = useAuth();
+  const { data, reload } = useApi<any[]>("/api/admin/jobs");
+  const [msg, setMsg] = useState<string | null>(null);
+  if (!data || data.length === 0) return null;
+  const when = (s: any) => ("daily" in s ? `denně v ${s.daily}` : `každých ${s.everyMinutes} min`);
+  return (
+    <Card title="Naplánované úlohy">
+      {msg && <p className="ok-box">{msg}</p>}
+      <ul className="list">
+        {data.map((j) => (
+          <li key={j.name} className="row">
+            <div className="grow">
+              <strong>{j.label}</strong> <span className="muted small">({when(j.schedule)})</span>
+              <div className="muted small">
+                {j.last ? `Naposledy ${fmtDateTime(j.last.started_at)} – ${j.last.status === "ok" ? "OK" : j.last.status === "error" ? "CHYBA" : "běží"}${j.last.message ? `: ${j.last.message}` : ""}` : "Zatím neproběhla"}
+              </div>
+            </div>
+            {j.last?.status === "error" && <Badge tone="red">Chyba</Badge>}
+            {can("users", "write") && (
+              <button
+                className="btn small"
+                onClick={async () => {
+                  const r = await post(`/api/admin/jobs/${encodeURIComponent(j.name)}/run`);
+                  setMsg(`${j.label}: ${r.status === "ok" ? "hotovo" : r.status}${r.message ? ` – ${r.message}` : ""}`);
+                  reload();
+                }}
+              >
+                Spustit teď
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+    </Card>
   );
 }

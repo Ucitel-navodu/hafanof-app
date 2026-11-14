@@ -3,6 +3,7 @@ import { post } from "../api";
 import { useAuth } from "../auth";
 import { USER_ROLE } from "../labels";
 import { Card, Form, KV, PageHead } from "../ui";
+import { collect } from "../modules";
 
 export function Profile() {
   const { me, logout } = useAuth();
@@ -34,6 +35,13 @@ export function Profile() {
             }}
           />
         </Card>
+        {collect("profileSections")
+          .sort((a, b) => a.order - b.order)
+          .map((sec) => (
+            <div key={sec.key} className="span-2">
+              {sec.render()}
+            </div>
+          ))}
       </div>
     </>
   );

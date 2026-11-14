@@ -128,7 +128,11 @@ export function fmtDateTime(d?: string | null): string {
   const dt = new Date(d.includes("T") ? d : d.replace(" ", "T") + "Z");
   return dt.toLocaleString("cs-CZ", { day: "numeric", month: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" });
 }
-export const todayIso = () => new Date().toISOString().slice(0, 10);
+/** Dnešní datum v místním čase prohlížeče (ne UTC — jinak by po půlnoci byl „dnes“ ještě včerejšek). */
+export const todayIso = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+};
 export function addDays(date: string, n: number) {
   const d = new Date(date + "T00:00:00Z");
   d.setUTCDate(d.getUTCDate() + n);
@@ -165,4 +169,18 @@ export function fieldValue(entity: string, field: string, v: unknown): string | 
   if (entity === "tasks") return TASK_STATUS[v] ?? v;
   if (entity === "documents") return DOC_STATUS[v] ?? v;
   return null;
+}
+
+/** Částka v haléřích → „1 234,50 Kč“. V DB i API jsou částky celé číslo v haléřích. */
+export function fmtMoney(halere?: number | null, opts: { sign?: boolean } = {}): string {
+  if (halere === null || halere === undefined) return "—";
+  const s = (halere / 100).toLocaleString("cs-CZ", { minimumFractionDigits: halere % 100 ? 2 : 0, maximumFractionDigits: 2 });
+  return `${opts.sign && halere > 0 ? "+" : ""}${s} Kč`;
+}
+/** „1 234,5“ / „1234.50“ → haléře (celé číslo), nebo null při neplatném vstupu. */
+export function parseMoney(input: unknown): number | null {
+  if (typeof input === "number") return Number.isFinite(input) ? Math.round(input * 100) : null;
+  const s = String(input ?? "").replace(/\s|Kč/g, "").replace(",", ".");
+  if (!/^-?\d+(\.\d{1,2})?$/.test(s)) return null;
+  return Math.round(Number(s) * 100);
 }

@@ -90,8 +90,9 @@ describe("Sekce 23 – pes od příjmu po adopci", () => {
     await team.post(`/api/dogs/${ids.dog}/weights`, { date: today(), kg: 14.2 });
     const cal = await team.get(`/api/calendar?from=${today()}&to=${addDays(today(), 14)}`);
     assert.ok(cal.some((i: any) => i.type === "health" && i.date === checkDate && i.dog_id === ids.dog), "kontrola je v kalendáři");
+    const alerts = await team.get("/api/alerts");
+    assert.ok(alerts.some((a: any) => a.module === "health" && a.link === `/psi/${ids.dog}?tab=health`), "kontrola je mezi upozorněními");
     const dash = await team.get("/api/dashboard");
-    assert.ok(dash.health_upcoming.some((i: any) => i.dog_id === ids.dog), "kontrola je na nástěnce");
     assert.equal(dash.medications_active.length, 1);
   });
 
@@ -172,11 +173,11 @@ describe("Sekce 23 – pes od příjmu po adopci", () => {
 
   test("vytvořit/doplnit adopční dokumentaci", async () => {
     const missing = await team.post("/api/documents", fileForm({ dog_id: String(ids.dog), adoption_id: String(ids.appA), category: "adoption", title: "Adopční smlouva", status: "awaiting_signature" }, "smlouva.docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"));
-    let dash = await team.get("/api/dashboard");
-    assert.ok(dash.documents_pending.some((d: any) => d.id === missing.id), "nepodepsaná smlouva je na nástěnce");
+    let alerts = await team.get("/api/alerts");
+    assert.ok(alerts.some((a: any) => a.key === `document:awaiting_signature:${missing.id}`), "nepodepsaná smlouva je mezi upozorněními");
     await team.patch(`/api/documents/${missing.id}`, { status: "signed" });
-    dash = await team.get("/api/dashboard");
-    assert.ok(!dash.documents_pending.some((d: any) => d.id === missing.id));
+    alerts = await team.get("/api/alerts");
+    assert.ok(!alerts.some((a: any) => a.key === `document:awaiting_signature:${missing.id}`));
     const adoption = await team.get(`/api/adoptions/${ids.appA}`);
     assert.equal(adoption.documents.length, 1);
     assert.equal(adoption.communications.length, 1);
@@ -310,7 +311,9 @@ describe("Sekce 24 – oprávnění", () => {
       assert.equal((await volunteer.raw("GET", u)).status, 403, u);
     }
     const s = await volunteer.get("/api/search?q=Adam");
-    assert.deepEqual(s.people, []);
+    assert.ok(!s.some((g: any) => g.key === "people"), "dobrovolník nenajde osoby");
+    const t = await team.get("/api/search?q=Adam");
+    assert.ok(t.some((g: any) => g.key === "people" && g.items.length > 0), "tým osoby najde");
     // Potvrzení splnění vlastního úkolu.
     const users = await admin.get("/api/users");
     const vid = users.find((u: any) => u.email === "dobro@test.cz").id;

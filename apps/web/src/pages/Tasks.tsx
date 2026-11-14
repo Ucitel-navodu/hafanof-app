@@ -5,6 +5,7 @@ import { useAuth } from "../auth";
 import { PRIORITY, TASK_STATUS, fmtDate, fmtDateTime, todayIso } from "../labels";
 import { Badge, Card, Empty, ErrorBox, Form, KV, Loading, Modal, PageHead, toFormData } from "../ui";
 import { TASK_FIELDS } from "./DogDetail";
+import { DocLink } from "../components/DocLink";
 
 const VIEWS: [string, string][] = [
   ["mine", "Moje úkoly"],
@@ -156,9 +157,7 @@ function TaskDetail({ id, onClose }: { id: number; onClose: () => void }) {
             <ul className="list compact">
               {t.attachments.map((a: any) => (
                 <li key={a.id}>
-                  <a href={a.url} target="_blank" rel="noreferrer">
-                    {a.title}
-                  </a>
+                  <DocLink doc={a} />
                 </li>
               ))}
             </ul>

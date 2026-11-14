@@ -1,7 +1,7 @@
 /** Obnova ze zálohy. Server musí být zastavený. Použití: npm run restore -- <složka zálohy> */
 import path from "node:path";
 import { restoreBackup } from "../src/backup";
-import { openDb } from "../src/db";
+import { openDb } from "../src/database";
 import { audit } from "../src/audit";
 import { dataDir, uploadsDir } from "./paths";
 

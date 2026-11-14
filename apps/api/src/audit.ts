@@ -1,6 +1,7 @@
 import type { DB } from "./db";
 import type { AuthUser } from "./auth";
 import { HttpError } from "./auth";
+import { pragueNow } from "./time";
 
 type Row = Record<string, unknown>;
 const HIDDEN = new Set(["password_hash"]);
@@ -127,7 +128,8 @@ export function addDogEvent(
   });
 }
 
-export const today = () => new Date().toISOString().slice(0, 10);
+/** Dnešní datum v Praze (ne UTC — jinak by po půlnoci SEČ byl „dnes“ ještě včerejšek). */
+export const today = () => pragueNow().date;
 
 export function addDays(date: string, days: number): string {
   const d = new Date(date + "T00:00:00Z");

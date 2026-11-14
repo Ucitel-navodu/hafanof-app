@@ -4,11 +4,12 @@
  *   HAFANOF_ADMIN_EMAIL=... HAFANOF_ADMIN_PASSWORD=... npm run seed
  */
 import crypto from "node:crypto";
-import { openDb } from "../src/db";
+import { openDb } from "../src/database";
 import { hashPassword } from "../src/auth";
 import { nextRegNumber } from "../src/routes/dogs";
 import { addDays, today } from "../src/audit";
 import { dataDir } from "./paths";
+import { MODULE_LIST } from "../src/modules";
 
 const db = openDb(dataDir);
 const email = (process.env.HAFANOF_ADMIN_EMAIL ?? "admin@hafanof.cz").toLowerCase();
@@ -55,6 +56,8 @@ if (process.env.HAFANOF_DEMO === "1") {
   db.prepare("INSERT INTO health_records(dog_id, kind, date, name, clinic, next_due) VALUES (?,?,?,?,?,?)")
     .run(shebby, "vaccination", addDays(today(), -30), "Nobivac DHPPi+L", "Veterina Lhota", addDays(today(), 5));
   db.prepare("INSERT INTO tasks(title, due_date, priority) VALUES (?,?,?)").run("Nafotit Shebby na adopční inzerát", today(), "high");
+  // Ukázková data jednotlivých modulů (finance, sklad, spolek…).
+  for (const m of MODULE_LIST) m.seedDemo?.(db);
   console.log("Ukázková data vložena.");
 }
 if (!process.env.HAFANOF_ADMIN_PASSWORD) console.log("\n⚠ Heslo administrátora bylo vygenerováno — uložte si ho a po přihlášení změňte.");

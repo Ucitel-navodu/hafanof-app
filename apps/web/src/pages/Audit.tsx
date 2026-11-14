@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useApi } from "../api";
 import { useAuth } from "../auth";
-import { ACTION, ENTITY, FIELD, fieldValue, fmtDateTime } from "../labels";
+import { ACTION, ENTITY as CORE_ENTITY, FIELD as CORE_FIELD, fieldValue, fmtDateTime } from "../labels";
+import { entityLabels, fieldLabels } from "../modules";
+
+const ENTITY = { ...CORE_ENTITY, ...entityLabels() };
+const FIELD = { ...CORE_FIELD, ...fieldLabels() };
 import { Card, Empty, ErrorBox, Loading, PageHead } from "../ui";
 
 function show(v: unknown) {

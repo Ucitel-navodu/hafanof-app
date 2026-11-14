@@ -1,5 +1,5 @@
 /** Záloha databáze a souborů. Vhodné spouštět z cronu, např. denně ve 2:00. */
-import { openDb } from "../src/db";
+import { openDb } from "../src/database";
 import { createBackup } from "../src/backup";
 import { audit } from "../src/audit";
 import { backupsDir, dataDir, uploadsDir } from "./paths";

@@ -19,6 +19,8 @@ import {
 } from "../labels";
 import { Badge, Card, Empty, ErrorBox, Form, KV, Loading, Modal, PageHead, Tabs, toFormData, type FieldDef, Paw } from "../ui";
 import { DOG_BASIC_FIELDS, DOG_INTAKE_FIELDS } from "./Dogs";
+import { DocLink } from "../components/DocLink";
+import { allowed, collect, timelineIcons, timelineLinks } from "../modules";
 
 const TEMPERAMENT_FIELDS: FieldDef[] = [
   { name: "temperament", label: "Povaha", type: "textarea" },
@@ -51,6 +53,11 @@ export function DogDetail() {
   if (can("adoptions")) tabs.push(["adoption", "Adopce"]);
   if (can("foster")) tabs.push(["foster", "Dočasná péče"]);
   if (can("tasks", "read")) tabs.push(["tasks", "Úkoly"]);
+  const extraTabs = collect("dogTabs")
+    .filter((t) => allowed(can, t))
+    .sort((a, b) => a.order - b.order);
+  for (const t of extraTabs) tabs.push([t.key, t.label]);
+  const sections = collect("dogTabSections").filter((s) => s.tab === tab && allowed(can, s));
 
   return (
     <>
@@ -84,6 +91,12 @@ export function DogDetail() {
       {tab === "adoption" && <DogAdoptions dog={dog} />}
       {tab === "foster" && <Foster dog={dog} reload={reload} />}
       {tab === "tasks" && <DogTasks dog={dog} />}
+      {extraTabs.filter((t) => t.key === tab).map((t) => (
+        <div key={t.key}>{t.render(dog, reload)}</div>
+      ))}
+      {sections.map((s, i) => (
+        <div key={i}>{s.render(dog, reload)}</div>
+      ))}
     </>
   );
 }
@@ -213,9 +226,10 @@ function Timeline({ dogId }: { dogId: number }) {
   const [adding, setAdding] = useState(false);
   const refLink = (e: any) => {
     if (e.ref_type === "adoption") return `/adopce?id=${e.ref_id}`;
-    if (e.ref_type === "document") return `/api/documents/${e.ref_id}/file`;
     if (e.ref_type === "health_record" || e.ref_type === "medication") return `?tab=health`;
     if (e.ref_type === "placement") return `?tab=foster`;
+    const moduleLink = timelineLinks()[e.ref_type];
+    if (moduleLink && e.ref_id) return moduleLink(e.ref_id, { id: dogId });
     return null;
   };
   return (
@@ -240,7 +254,7 @@ function Timeline({ dogId }: { dogId: number }) {
             return (
               <li key={e.id} className={`tl tl-${e.type}`}>
                 <span className="tl-icon" aria-hidden>
-                  {EVENT_ICON[e.type] ?? "•"}
+                  {EVENT_ICON[e.type] ?? timelineIcons()[e.type] ?? "•"}
                 </span>
                 <div>
                   <div className="muted small">
@@ -248,14 +262,10 @@ function Timeline({ dogId }: { dogId: number }) {
                     {e.author ? ` · ${e.author}` : ""}
                   </div>
                   <div>
-                    {link ? (
-                      link.startsWith("/api/") ? (
-                        <a href={link} target="_blank" rel="noreferrer">
-                          {e.title}
-                        </a>
-                      ) : (
-                        <Link to={link}>{e.title}</Link>
-                      )
+                    {e.ref_type === "document" ? (
+                      <DocLink doc={{ id: e.ref_id, title: e.title }} />
+                    ) : link ? (
+                      <Link to={link}>{e.title}</Link>
                     ) : (
                       e.title
                     )}
@@ -351,9 +361,7 @@ function Health({ dogId }: { dogId: number }) {
                       {r.document_id && (
                         <>
                           {" "}
-                          <a href={`/api/documents/${r.document_id}/file`} target="_blank" rel="noreferrer" title="Příloha">
-                            📎
-                          </a>
+                          <DocLink doc={{ id: r.document_id, title: "📎" }} />
                         </>
                       )}
                     </td>
@@ -494,11 +502,18 @@ function Documents({ dog, reload: reloadDog }: { dog: any; reload: () => void })
     <Card
       title="Dokumentace psa"
       actions={
-        can("documents", "own") && (
-          <button className="btn small primary" onClick={() => setUpload(true)}>
-            {own ? "+ Fotka" : "+ Nahrát dokument"}
-          </button>
-        )
+        <>
+          {collect("dogDocActions")
+            .filter((a) => allowed(can, a))
+            .map((a) => (
+              <span key={a.key}>{a.render(dog, () => (reload(), reloadDog()))}</span>
+            ))}
+          {can("documents", "own") && (
+            <button className="btn small primary" onClick={() => setUpload(true)}>
+              {own ? "+ Fotka" : "+ Nahrát dokument"}
+            </button>
+          )}
+        </>
       }
     >
       {!data ? (
@@ -517,9 +532,9 @@ function Documents({ dog, reload: reloadDog }: { dog: any; reload: () => void })
                 <div className="gallery">
                   {docs.map((d) => (
                     <figure key={d.id}>
-                      <a href={d.url} target="_blank" rel="noreferrer">
-                        <img src={d.url} alt={d.title} loading="lazy" />
-                      </a>
+                      <DocLink doc={d}>
+                        <img src={`${d.url}?variant=thumb`} alt={d.title} loading="lazy" />
+                      </DocLink>
                       {write && dog.photo_document_id !== d.id && (
                         <button
                           className="btn small ghost"
@@ -539,13 +554,7 @@ function Documents({ dog, reload: reloadDog }: { dog: any; reload: () => void })
                   {docs.map((d) => (
                     <li key={d.id} className="row">
                       <div className="grow">
-                        {d.url ? (
-                          <a href={d.url} target="_blank" rel="noreferrer">
-                            {d.title}
-                          </a>
-                        ) : (
-                          d.title
-                        )}
+                        {d.url ? <DocLink doc={d} /> : d.title}
                         <div className="muted small">
                           {fmtDateTime(d.created_at)} · {d.uploaded_by_name}
                         </div>
