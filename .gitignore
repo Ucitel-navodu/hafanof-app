@@ -1,0 +1,2 @@
+# Dočasné pracovní stromy agentů (paralelní vývoj modulů) — nikdy necommitovat
+.claude/worktrees/
