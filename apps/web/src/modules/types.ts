@@ -30,6 +30,8 @@ export interface WebModule {
   dogTabSections?: (Gate & { tab: string; render: (dog: any, reload: () => void) => ReactNode })[];
   /** Sekce na kartě osoby. */
   personSections?: (Gate & { key: string; render: (person: any, reload: () => void) => ReactNode })[];
+  /** Rychlá tlačítka v hlavičce nástěnky (sekce 3: přidat psa, osobu, úkol, výdaj, dokument). */
+  quickActions?: (Gate & { key: string; label: string; to: string; order: number })[];
   /** Karty na nástěnce „Můj Hafanof“. */
   dashboardWidgets?: (Partial<Gate> & { key: string; order: number; render: () => ReactNode })[];
   /** Sekce na stránce Můj účet. */

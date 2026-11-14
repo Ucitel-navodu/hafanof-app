@@ -55,6 +55,14 @@ export function Dashboard() {
                 {can("tasks", "read") ? "+ Úkol" : "+ Požadavek"}
               </button>
             )}
+            {collect("quickActions")
+              .filter((a) => allowed(can, a))
+              .sort((a, b) => a.order - b.order)
+              .map((a) => (
+                <button key={a.key} className="btn" onClick={() => nav(a.to)}>
+                  {a.label}
+                </button>
+              ))}
           </div>
         }
       />

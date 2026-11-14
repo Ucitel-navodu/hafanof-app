@@ -209,8 +209,9 @@ export function documentRoutes(db: DB, uploadsDir: string) {
       const refId = optInt(body.ref_id);
       if (refId === null) throw new HttpError(400, "Chybí ref_id");
       if (!ref.canAttach(db, requireUser(req), refId)) throw new HttpError(403, "Nedostatečné oprávnění");
-      const category = str(body.category) ?? "other";
-      assertOneOf(category, DOCUMENT_CATEGORIES, "category");
+      const categories = ref.categories ?? DOCUMENT_CATEGORIES;
+      const category = str(body.category) ?? (categories.includes("other") ? "other" : categories[0]);
+      assertOneOf(category, categories, "category");
       const status = str(body.status) ?? (req.file ? "ready" : "missing");
       assertOneOf(status, DOCUMENT_STATUSES, "status");
       const dogId = optInt(body.dog_id);
@@ -266,9 +267,10 @@ export function documentRoutes(db: DB, uploadsDir: string) {
     "/:id",
     h((req, res) => {
       const id = intParam(req);
-      requireManage(req, getRow(db, "documents", id));
+      const existing = getRow(db, "documents", id);
+      requireManage(req, existing);
       assertOneOf(req.body.status, DOCUMENT_STATUSES, "status");
-      assertOneOf(req.body.category, DOCUMENT_CATEGORIES, "category");
+      assertOneOf(req.body.category, existing.ref_type ? (refOf(String(existing.ref_type)).categories ?? DOCUMENT_CATEGORIES) : DOCUMENT_CATEGORIES, "category");
       const { after } = updateAudited(db, req.user, "documents", id, pick(req.body, ["title", "status", "category"]));
       res.json(after);
     }),

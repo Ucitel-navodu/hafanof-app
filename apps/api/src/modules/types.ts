@@ -113,6 +113,8 @@ export interface DocumentRef {
   canView: (db: DB, user: AuthUser, refId: number) => boolean;
   /** Smí uživatel k záznamu nahrát/upravit/smazat dokument? */
   canAttach: (db: DB, user: AuthUser, refId: number) => boolean;
+  /** Povolené hodnoty `category` pro dokumenty této vazby (výchozí: kategorie dokumentů psa). */
+  categories?: readonly string[];
 }
 
 export interface ApiModule {
