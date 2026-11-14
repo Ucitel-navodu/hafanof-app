@@ -4,6 +4,20 @@ import { HttpError } from "./auth";
 import { pragueNow } from "./time";
 
 type Row = Record<string, unknown>;
+
+/** Druhy auditních záznamů. Moduly používají i export/import/anonymize/security. */
+export type AuditAction =
+  | "create"
+  | "update"
+  | "delete"
+  | "login"
+  | "logout"
+  | "backup"
+  | "restore"
+  | "export"
+  | "import"
+  | "anonymize"
+  | "security";
 const HIDDEN = new Set(["password_hash"]);
 
 function diff(before: Row | null, after: Row | null): Record<string, [unknown, unknown]> {
@@ -22,7 +36,7 @@ function diff(before: Row | null, after: Row | null): Record<string, [unknown, u
 export function audit(
   db: DB,
   user: AuthUser | undefined,
-  action: "create" | "update" | "delete" | "login" | "logout" | "backup" | "restore",
+  action: AuditAction,
   entity: string,
   entityId: number | null,
   opts: { before?: Row | null; after?: Row | null; dogId?: number | null; extra?: Row } = {},

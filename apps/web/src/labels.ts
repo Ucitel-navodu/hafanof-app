@@ -116,6 +116,10 @@ export const ACTION: Record<string, string> = {
   logout: "odhlášení",
   backup: "záloha",
   restore: "obnova",
+  export: "export",
+  import: "import",
+  anonymize: "anonymizace",
+  security: "zabezpečení",
 };
 
 export function fmtDate(d?: string | null): string {
